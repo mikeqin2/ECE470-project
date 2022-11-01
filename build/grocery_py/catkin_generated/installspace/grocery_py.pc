@@ -1,0 +1,8 @@
+prefix=/home/ur3/project/install
+
+Name: grocery_py
+Description: Description of grocery_py
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

@@ -8851,22 +8851,22 @@ clean: drivers/ur3_driver/CMakeFiles/ur3_driver_gennodejs.dir/clean
 .PHONY : clean
 
 #=============================================================================
-# Directory level rules for directory lab2pkg_py
+# Directory level rules for directory grocery_py
 
 # Convenience name for "all" pass in the directory.
-lab2pkg_py/all:
+grocery_py/all:
 
-.PHONY : lab2pkg_py/all
+.PHONY : grocery_py/all
 
 # Convenience name for "clean" pass in the directory.
-lab2pkg_py/clean:
+grocery_py/clean:
 
-.PHONY : lab2pkg_py/clean
+.PHONY : grocery_py/clean
 
 # Convenience name for "preinstall" pass in the directory.
-lab2pkg_py/preinstall:
+grocery_py/preinstall:
 
-.PHONY : lab2pkg_py/preinstall
+.PHONY : grocery_py/preinstall
 
 #=============================================================================
 # Directory level rules for directory drivers/universal_robot/ur_bringup

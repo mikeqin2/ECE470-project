@@ -171,11 +171,27 @@ def move_block(pub_cmd, loop_rate, start_loc, start_height, \
                end_loc, end_height):
     global Q
 
-    ### Hint: Use the Q array to map out your towers by location and "height".
+    move_arm(pub_cmd, loop_rate, Q[start_height][start_loc], 4.0, 4.0)
+    rospy.sleep(0.5)
+    gripper(pub_cmd, loop_rate, suction_on)
+    rospy.sleep(0.5)
 
-    error = 0
+    # if no block exit
+    if (gripper_ == 0):
+        move_arm(pub_cmd, loop_rate, home, 4.0, 4.0)
+        gripper(pub_cmd, loop_rate, suction_off)
+        print("NO BLOCK FOUND. EXITING... ")
+        sys.exit()
 
+    move_arm(pub_cmd, loop_rate, home, 4.0, 4.0)
+    rospy.sleep(0.5)
+    move_arm(pub_cmd, loop_rate, Q[end_height][end_loc], 4.0, 4.0)
+    rospy.sleep(0.5)
+    gripper(pub_cmd, loop_rate, suction_off)
+    rospy.sleep(0.5)
+    move_arm(pub_cmd, loop_rate, home, 4.0, 4.0)
 
+    error=0
 
     return error
 
@@ -252,14 +268,9 @@ def main():
     # each time data is published
     sub_position = rospy.Subscriber('ur3/position', position, position_callback)
 
-    ############## Your Code Start Here ##############
-    # TODO: define a ROS subscriber for ur3/gripper_input message and corresponding callback function
 
+    sub_gripper = rospy.Subscriber('ur3/gripper_input', gripper_input, gripper_callback)	
 
-
-
-
-    ############### Your Code End Here ###############
 
 
     ############## Your Code Start Here ##############
