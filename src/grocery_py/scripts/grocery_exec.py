@@ -39,17 +39,10 @@ current_position_set = False
 
 Q = None
 
-############## Your Code Start Here ##############
 
-"""
-TODO: define a ROS topic callback funtion for getting the state of suction cup
-Whenever ur3/gripper_input publishes info this callback function is called.
-"""
-
-
-
-
-############### Your Code End Here ###############
+def gripper_callback(msg):
+    global gripper_
+    gripper_ = msg.DIGIN
 
 
 """
