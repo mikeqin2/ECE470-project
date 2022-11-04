@@ -5,7 +5,7 @@ The task we will be asking our robot to perform is restocking grocery shelves. T
 - Clone a local repo on your VM. Follow the instructions on downloading the VM at https://uofi.app.box.com/s/3sqaarqs2zuniultzyc0ztz7yg4cn25h. There should also be an email sent out on this.
 - When you clone the repo the local repo name will be "ECE470-project". Remember to change it to "project", otherwise when you ```catkin_make``` it won't be able to recognize the path.
 - Instead of ```rosrun lab2pkg_py lab2_exec.py```, do ```rosrun grocery_py grocery_exec.py``` to run the program. 
-- When you run ```roslaunch``` 
+- When you run ```roslaunch ur3_driver ur3_gazebo_lauch``` it now spawns the world with the shelf model.  
 
 ## TODO (as of 11/3/2022):
 - Create the objects (I already created a shelf model). I can working on creating the objects (Mike). For now just use the blocks given. 
