@@ -5,9 +5,10 @@ The task we will be asking our robot to perform is restocking grocery shelves. T
 - Clone a local repo on your VM. Follow the instructions on downloading the VM at https://uofi.app.box.com/s/3sqaarqs2zuniultzyc0ztz7yg4cn25h. There should also be an email sent out on this.
 - When you clone the repo the local repo name will be "ECE470-project". Remember to change it to "project", otherwise when you ```catkin_make``` it won't be able to recognize the path.
 - Instead of ```rosrun lab2pkg_py lab2_exec.py```, do ```rosrun grocery_py grocery_exec.py``` to run the program. 
+- When you run ```roslaunch``` 
 
-## TODO (as of 10/30/2022):
-- Create the objects (we need to create the grocery models, a grocery shelf, and perhaps a container for the grocery where you grab the grocery from). 
-- Spawn objects (refer to the lab2 document sent in the email).
-- Grab the objects (refer to lab2 code)
+## TODO (as of 11/3/2022):
+- Create the objects (I already created a shelf model). I can working on creating the objects (Mike). For now just use the blocks given. 
+- Work on the codes so that the manipulator can perform a pick and place on an object (this part should already be done because I am using the move_block code from lab2). But test to see if works.
+- For each position of the shelf, we nedd a corresponding set of joint values, similar to task 2. However, I am not super sure how this part should be done considering that we can't manually move the manipulator in simulation as we did with the physical manipulator.
 
