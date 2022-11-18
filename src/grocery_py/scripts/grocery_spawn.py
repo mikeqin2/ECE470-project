@@ -20,7 +20,7 @@ if __name__ == '__main__':
     rospack = rospkg.RosPack()
     # Get path to yaml
     grocery_path = rospack.get_path('grocery_py')
-    yamlpath = os.path.join(grocery_path, 'scripts', grocery_data.yaml')
+    yamlpath = os.path.join(grocery_path, 'scripts', 'grocery_data.yaml')
 
     with open(yamlpath, 'r') as f:
         try:

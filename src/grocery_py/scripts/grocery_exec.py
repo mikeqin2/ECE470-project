@@ -192,6 +192,129 @@ def move_block(pub_cmd, loop_rate, start_loc, start_height, \
 ############### Your Code End Here ###############
 
 
+########## Lab 4 Inverse Kinematic Function ##########
+def lab_invk(xWgrip, yWgrip, zWgrip, yaw_WgripDegree):
+
+
+    # the distance between the end effector and the wrist
+    d = 0.0535
+
+    # yaw in radians
+    yaw_WgripRadian = (np.pi * yaw_WgripDegree) / 180
+
+    #=================== 1) Find x_cen, y_cen, z_cen ======================#
+    x_cen = xWgrip - d * np.cos(yaw_WgripRadian)
+    y_cen = yWgrip - d * np.sin(yaw_WgripRadian)
+    z_cen = zWgrip
+
+    #print(x_cen, y_cen, z_cen)
+
+    #========================= 2) Find theta1 ==============================#
+
+    # NOTE: this is not the L1 and L2 as the robot links. Just some arbitrary names we gave
+
+
+    # L2
+    L2 = 0.11
+
+    # d1
+    d1 = x_cen + 0.15
+
+    # L1 
+    L1 = y_cen - 0.15
+
+    # r
+    r1 = np.sqrt(d1**2 + L1**2)
+
+    #print(r1)
+
+    # theta_a_radian
+    # NOTE: use arccos instead of arcsin
+    theta_a_radian = np.arccos(L1 / r1)
+
+    # theta_c_radian
+    theta_c_radian = np.arcsin(L2 / r1)
+
+    theta1_radian = np.pi / 2 - theta_a_radian - theta_c_radian
+
+
+    #============================== 3) Find theta6 =========================#
+    
+    theta6_radian = np.pi - yaw_WgripRadian - (np.pi / 2 - theta1_radian)
+
+
+
+    #==================== 4) Find x_3end, y_3end, and z_3end ===============# 
+
+    # top view distance from green point to endpoint
+
+    
+
+    d_ge_top = r1 * np.cos(theta_c_radian) - 0.083
+    
+    x_3end = d_ge_top * np.cos(theta1_radian) - 0.15 
+
+    y_3end = d_ge_top * np.sin(theta1_radian) + 0.15
+
+    z_3end = z_cen + 0.141
+        
+    #==================== 5) Find theta2, theta3, and theta4 ===============#   	
+
+    # L3 
+    L3 = 0.244 
+
+    # L5
+    L5 = 0.213
+
+    # x1
+    x1 = -0.15
+
+    # y1
+    y1 = 0.15
+
+    # z1
+    z1 = 0.162
+
+    # side view distance from green point to endpoint
+    d_ge_side = np.sqrt((x_3end - x1)**2 + (z_3end - z1)**2 + (y_3end - y1)**2)
+
+    theta3_radian = np.pi - np.arccos((L3**2 + L5**2 - d_ge_side**2) / (2 * L3 * L5))
+
+
+    phi_1 = np.arcsin((z_3end - z1) / (d_ge_side)) 
+    # print(d_ge_side)
+
+    #print((L3**2 + d_ge_side**2 - L5**2) / (2 * L3 * d_ge_side))
+    phi_2 = np.arccos((L3**2 + d_ge_side**2 - L5**2) / (2 * L3 * d_ge_side))
+
+
+    theta2_radian = -phi_1 - phi_2
+
+    theta4_radian = - theta2_radian - theta3_radian
+
+
+
+    # theta1_radian = 0.0
+    # theta2_radian = 0.0
+    # theta3_radian = 0.0
+    # theta4_radian = 0.0
+    theta5_radian = -np.pi/2
+    # theta6_radian = 0.0
+
+    # print("theta1: ", theta1_radian)
+    # print("theta2: ", theta2_radian)
+    # print("theta2: ", theta2_radian)
+    # print("theta3: ", theta3_radian)
+    # print("theta4: ", theta4_radian)
+    # print("theta5: ", theta5_radian)
+    # print("theta6: ", theta6_radian)
+    thetaArray = [theta1_radian + np.pi, theta2_radian, theta3_radian, theta4_radian - (0.5*np.pi), theta5_radian, theta6_radian] #Adjusted joint angles to match robot definitions
+
+    return thetaArray
+
+#################### End of Lab 4 IK Function ######################
+
+
 def main():
 
     global home
@@ -308,30 +431,57 @@ def main():
     ############## Your Code Start Here ##############
     # TODO: modify the code so that UR3 can move tower accordingly from user input
 
-    while(loop_count > 0):
+    # while(loop_count > 0):
 
-        move_arm(pub_command, loop_rate, home, 4.0, 4.0)
+    #     move_arm(pub_command, loop_rate, home, 4.0, 4.0)
 
-        rospy.loginfo("Sending goal 1 ...")
-        move_arm(pub_command, loop_rate, Q[0][0][1], 4.0, 4.0)
+    #     rospy.loginfo("Sending goal 1 ...")
+    #     move_arm(pub_command, loop_rate, Q[0][0][1], 4.0, 4.0)
 
-        gripper(pub_command, loop_rate, suction_on)
-        # Delay to make sure suction cup has grasped the block
-        time.sleep(1.0)
+    #     gripper(pub_command, loop_rate, suction_on)
+    #     # Delay to make sure suction cup has grasped the block
+    #     time.sleep(1.0)
 
-        rospy.loginfo("Sending goal 2 ...")
-        move_arm(pub_command, loop_rate, Q[1][1][1], 4.0, 4.0)
+    #     rospy.loginfo("Sending goal 2 ...")
+    #     move_arm(pub_command, loop_rate, Q[1][1][1], 4.0, 4.0)
 
-        rospy.loginfo("Sending goal 3 ...")
-        move_arm(pub_command, loop_rate, Q[2][0][1], 4.0, 4.0)
+    #     rospy.loginfo("Sending goal 3 ...")
+    #     move_arm(pub_command, loop_rate, Q[2][0][1], 4.0, 4.0)
 
-        loop_count = loop_count - 1
+    #     loop_count = loop_count - 1
 
-    gripper(pub_command, loop_rate, suction_off)
+    # gripper(pub_command, loop_rate, suction_off)
+
+
+
+    while(loop_count > 0): #picks up the red block and places it at on top of the green block
+
+		move_arm(pub_command, loop_rate, home, 4.0, 4.0)
+		move_arm(pub_command, loop_rate, lab_invk(0.2, 0.05, 0.040, 0.0), 4.0, 4.0) #moves to the red block
+		time.sleep(1.0)
+
+		gripper(pub_command, loop_rate, suction_on) 
+		time.sleep(1.0)
+
+		move_arm(pub_command, loop_rate, home, 4.0, 4.0)
+		move_arm(pub_command, loop_rate, lab_invk(0.4, 0.05, 0.07, 0.0), 4.0, 4.0) #moves to an arbitrary position
+		time.sleep(1.0)
+
+		gripper(pub_command, loop_rate, suction_off)
+		time.sleep(1.0)
+
+		move_arm(pub_command, loop_rate, home, 4.0, 4.0)
+
+		loop_count = 0
+
+    
 
 
 
     ############### Your Code End Here ###############
+
+    
+
 
 
 if __name__ == '__main__':
@@ -341,3 +491,4 @@ if __name__ == '__main__':
     # When Ctrl+C is executed, it catches the exception
     except rospy.ROSInterruptException:
         pass
+
