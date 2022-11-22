@@ -12,7 +12,7 @@ The task we will be asking our robot to perform is restocking grocery shelves. T
 - Work on the codes so that the manipulator can perform a pick and place on an object (this part should already be done because I am using the move_block code from lab2). But test to see if works.
 - For each position of the shelf, we nedd a corresponding set of joint values, similar to task 2. However, I am not super sure how this part should be done considering that we can't manually move the manipulator in simulation as we did with the physical manipulator.
 
-#Temporary Update 11/18/2022 (Dylan):
+## Temporary Update 11/18/2022 (Dylan):
 I modified grocery_exec.py to pick up a red block, and place it on top of the green block. The code is imperfect, capable of picking up the block but not setting it down gently. 
 How to run:
 - Before running ```rosrun grocery_py grocery_exec.py``` you should run ```rosrun grocery_py grocery_spawn.py```
