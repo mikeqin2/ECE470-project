@@ -39,6 +39,29 @@ current_position_set = False
 
 Q = None
 
+# the left-top position of the shelf
+initial_shelf_pos = (-0.965662, -0.185334, 0.524682) 
+
+# distance between each cell of the shelf
+cell_dist = 0.11
+
+# size of the shelf (n by n)
+shelf_size = 5
+
+
+"""
+Calculate a shelf position 2d array given the initial_shelf_pos
+"""
+def calculate_shelf_pos(initial_shelf_pos):
+    shelf = np.empty([shelf_size, shelf_size], dtype=tuple)
+    for i in range(shelf_size):
+	for j in range(shelf_size):
+	    shelf[i , j] = (initial_shelf_pos[0],
+			    initial_shelf_pos[1] + 0.11 * j, 
+			    initial_shelf_pos[2] - 0.11 * i)
+    # print(shelf)
+    return shelf 
+					
 
 def gripper_callback(msg):
     global gripper_
@@ -317,6 +340,8 @@ def lab_invk(xWgrip, yWgrip, zWgrip, yaw_WgripDegree):
 
 def main():
 
+    calculate_shelf_pos(initial_shelf_pos)
+
     global home
     global Q
     global SPIN_RATE
@@ -457,7 +482,7 @@ def main():
     while(loop_count > 0): #picks up the red block and places it at on top of the green block
 
 		move_arm(pub_command, loop_rate, home, 4.0, 4.0)
-		move_arm(pub_command, loop_rate, lab_invk(0.2, 0.05, 0.040, 0.0), 4.0, 4.0) #moves to the red block
+		move_arm(pub_command, loop_rate, lab_invk(0.2, 0.05, 0.0425, 0.0), 4.0, 4.0) #moves to the red block
 		time.sleep(1.0)
 
 		gripper(pub_command, loop_rate, suction_on) 
