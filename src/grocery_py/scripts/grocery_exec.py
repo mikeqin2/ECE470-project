@@ -338,6 +338,108 @@ def lab_invk(xWgrip, yWgrip, zWgrip, yaw_WgripDegree):
 #################### End of Lab 4 IK Function ######################
 
 
+################### Shelf Inverse Kinematic Function ##################
+def shelf_invk(xWgrip, yWgrip, zWgrip, yaw_WgripDegree):
+	# =================== Your code starts here ====================#
+
+	#all angles are in radians unless otherwise stated
+	#list the link lengths of the robot
+	L1 = 0.152
+	L2 = 0.12
+	L3 = 0.244
+	L4 = 0.093
+	L5 = 0.213
+	L6 = 0.083
+	L7 = 0.083
+	L8 = 0.082
+	L9 = 0.0535
+	L10 = 0.059
+
+	#initialize variable that keeps track of which quadrant the end-effector is in
+	quadrant = 1
+
+	#check which quadrant the end-effector is in
+	if xWgrip >= -0.15:
+		quadrant = 1
+	else:
+		quadrant = 2
+
+	#adjust the position to be based off of the green point
+	if quadrant == 1:
+		x_grip = xWgrip + 0.15
+	if quadrant == 2:
+		x_grip = abs(abs(xWgrip) - 0.3)
+		xWgrip = x_grip - 0.15
+	y_grip = yWgrip - 0.15
+	
+	#finding theta1
+	theta_a = np.arctan(y_grip / x_grip)
+
+	r0 = np.sqrt((x_grip**2) + (y_grip**2))
+	d0 = L8 + L10
+	d1 = np.sqrt((r0**2) + (d0**2) - (2 * r0 * d0 * np.cos(theta_a)))
+	theta_b = np.arccos(((d1**2) + (r0**2) - (d0**2))/(2 * d1 * r0))
+
+	d2 = L2 - L4 + L6
+	theta_c = np.arcsin(d2 / d1)
+
+	theta1 = theta_a + theta_b - theta_c
+
+	#finding theta5
+	theta5 = -theta1 - (np.pi/2)
+
+	#finding the centerpoint (the ornage point) 
+	x_cen = xWgrip - d0
+	y_cen = yWgrip
+	z_cen = zWgrip
+
+	#finding the endpoint (the yellow point)
+	d3 = L7 + L9
+
+	x3_end = x_cen + (d2 * np.sin(theta1))
+	y3_end = y_cen - (d2 * np.cos(theta1))
+	z3_end = z_cen - d3
+
+	#defining the green point
+	x1 = -0.15
+	y1 = 0.15
+	z1 = L1 + 0.01
+
+	#finding theta3
+	d4 = np.sqrt(((x3_end - x1)**2) + ((y3_end - y1)**2) + ((z3_end - z1)**2))
+	theta3 = np.pi - np.arccos(((L3**2) + (L5**2) - (d4**2)) / (2 * L3 * L5))
+
+	#finding theta2 
+	phi2 = np.arccos(((L3**2) + (d4**2) - (L5**2)) / (2 * L3 * d4))
+	phi1 = np.arcsin((z3_end - z1) / d4)
+	theta2 = -phi1 - phi2
+
+	#finding theta4
+	theta4 = -theta2 - theta3 - (np.pi / 2)
+
+	#constraining theta6
+	theta6 = np.pi / 2
+
+	#adjust theta1 and theta5 if they are in quadrant II
+	if quadrant == 2:
+		theta1 = np.pi - (2 * theta_c) - theta1
+		theta5 = (np.pi / 2) - theta1
+
+
+	#modify theta values to match robot value definitions IF not using lab_fk to return the value
+	# Initialize the return_value
+	return_value = [None, None, None, None, None, None]
+	return_value[0] = theta1 + np.pi
+	return_value[1] = theta2
+	return_value[2] = theta3
+	return_value[3] = theta4 - (0.5*np.pi)
+	return_value[4] = theta5
+	return_value[5] = theta6
+
+	# ==============================================================#
+	return return_value
+
+
 def main():
 
     calculate_shelf_pos(initial_shelf_pos)
