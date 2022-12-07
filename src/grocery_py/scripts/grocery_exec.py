@@ -519,27 +519,27 @@ def main():
     ############## Your Code Start Here ##############
     # TODO: modify the code below so that program can get user input
 
-    input_done = 0
-    loop_count = 0
+    # input_done = 0
+    # loop_count = 0
 
-    while(not input_done):
-        input_string = raw_input("Enter number of loops <Either 1 2 3 or 0 to quit> ")
-        print("You entered " + input_string + "\n")
+    # while(not input_done):
+    #     input_string = raw_input("Enter number of loops <Either 1 2 3 or 0 to quit> ")
+    #     print("You entered " + input_string + "\n")
 
-        if(int(input_string) == 1):
-            input_done = 1
-            loop_count = 1
-        elif (int(input_string) == 2):
-            input_done = 1
-            loop_count = 2
-        elif (int(input_string) == 3):
-            input_done = 1
-            loop_count = 3
-        elif (int(input_string) == 0):
-            print("Quitting... ")
-            sys.exit()
-        else:
-            print("Please just enter the character 1 2 3 or 0 to quit \n\n")
+    #     if(int(input_string) == 1):
+    #         input_done = 1
+    #         loop_count = 1
+    #     elif (int(input_string) == 2):
+    #         input_done = 1
+    #         loop_count = 2
+    #     elif (int(input_string) == 3):
+    #         input_done = 1
+    #         loop_count = 3
+    #     elif (int(input_string) == 0):
+    #         print("Quitting... ")
+    #         sys.exit()
+    #     else:
+    #         print("Please just enter the character 1 2 3 or 0 to quit \n\n")
 
 
 
@@ -579,29 +579,67 @@ def main():
 
     # gripper(pub_command, loop_rate, suction_off)
 
+	#Initializing the shelf position matrix
+    Qi = [0.0, 0.0, 0.0]
+    shelfQ = [ [Qi, Qi, Qi], \
+			   [Qi, Qi, Qi], \
+			   [Qi, Qi, Qi] ]
+    for i in range(3):
+		for j in range(3):
+			shelfQ[i][j] = [-0.6182, 0.175 + (0.11 * i), 0.54 - (0.12 * j)]
+
+    #Initializing the supply matrix
+    supplyQ = [ [Qi, Qi, Qi], \
+			    [Qi, Qi, Qi], \
+			    [Qi, Qi, Qi] ]
+    for i in range(3):
+		for j in range(3):
+			supplyQ[i][j] = [0.4 - (0.1 * j), 0.25 - (0.1 * i), 0.026]
+
+    # while(loop_count > 0): #picks up the red block and places it at on top of the green block
+
+	# 	move_arm(pub_command, loop_rate, home, 4.0, 4.0)
+	# 	move_arm(pub_command, loop_rate, shelf_invk(shelfQ[0][0][0], shelfQ[0][0][1], shelfQ[0][0][2], 0.0), 4.0, 4.0)
+
+	# 	move_arm(pub_command, loop_rate, home, 4.0, 4.0)
+	# 	move_arm(pub_command, loop_rate, shelf_invk(shelfQ[0][1][0], shelfQ[0][1][1], shelfQ[0][1][2], 0.0), 4.0, 4.0)
+	# 	move_arm(pub_command, loop_rate, home, 4.0, 4.0)
+	# 	move_arm(pub_command, loop_rate, shelf_invk(shelfQ[0][2][0], shelfQ[0][2][1], shelfQ[0][2][2], 0.0), 4.0, 4.0)
+
+	# 	loop_count = 0
+
+    for i in range(3):
+		for j in range (3):
+			move_arm(pub_command, loop_rate, home, 4.0, 4.0)
+			move_arm(pub_command, loop_rate, shelf_invk(shelfQ[i][j][0], shelfQ[i][j][1], shelfQ[i][j][2], 0.0), 4.0, 4.0)
+			for k in range (1,11):
+				move_arm(pub_command, loop_rate, shelf_invk(shelfQ[i][j][0] - (0.01 * k), shelfQ[i][j][1], shelfQ[i][j][2], 0.0), 4.0, 4.0)
+			gripper(pub_command, loop_rate, suction_on)
+			time.sleep(0.5)
+			for k in range (1,11):
+				move_arm(pub_command, loop_rate, shelf_invk(shelfQ[i][j][0] + (0.01 * k) - 0.1, shelfQ[i][j][1], shelfQ[i][j][2], 0.0), 4.0, 4.0)
+			if gripper_ == 0:
+				#move to the supply, grab it
+				gripper(pub_command, loop_rate, suction_off)
+				move_arm(pub_command, loop_rate, home, 4.0, 4.0)
+				move_arm(pub_command, loop_rate, lab_invk(supplyQ[i][j][0], supplyQ[i][j][1], supplyQ[i][j][2]+ 0.1, 0.0), 4.0, 4.0)
+				for k in range (1,11):
+					move_arm(pub_command, loop_rate, lab_invk(supplyQ[i][j][0], supplyQ[i][j][1], supplyQ[i][j][2] + 0.1 - (0.01 * k), 0.0), 4.0, 4.0)
+				gripper(pub_command, loop_rate, suction_on)
+				for k in range (1,11):
+					move_arm(pub_command, loop_rate, lab_invk(supplyQ[i][j][0], supplyQ[i][j][1], supplyQ[i][j][2] + (0.01 * k), 0.0), 4.0, 4.0)
+				#move to the shelf, drop it
+				move_arm(pub_command, loop_rate, home, 4.0, 4.0)
+				move_arm(pub_command, loop_rate, shelf_invk(shelfQ[i][j][0], shelfQ[i][j][1], shelfQ[i][j][2], 0.0), 4.0, 4.0)
+				for k in range (1,11):
+					move_arm(pub_command, loop_rate, shelf_invk(shelfQ[i][j][0] - (0.01 * k), shelfQ[i][j][1], shelfQ[i][j][2], 0.0), 4.0, 4.0)
+				gripper(pub_command, loop_rate, suction_off)
+				for k in range (1,11):
+					move_arm(pub_command, loop_rate, shelf_invk(shelfQ[i][j][0] + (0.01 * k) - 0.1, shelfQ[i][j][1], shelfQ[i][j][2], 0.0), 4.0, 4.0)
 
 
-    while(loop_count > 0): #picks up the red block and places it at on top of the green block
 
-		move_arm(pub_command, loop_rate, home, 4.0, 4.0)
-		move_arm(pub_command, loop_rate, lab_invk(0.2, 0.05, 0.0425, 0.0), 4.0, 4.0) #moves to the red block
-		time.sleep(1.0)
 
-		gripper(pub_command, loop_rate, suction_on) 
-		time.sleep(1.0)
-
-		move_arm(pub_command, loop_rate, home, 4.0, 4.0)
-		move_arm(pub_command, loop_rate, lab_invk(0.4, 0.05, 0.07, 0.0), 4.0, 4.0) #moves to an arbitrary position
-		time.sleep(1.0)
-
-		gripper(pub_command, loop_rate, suction_off)
-		time.sleep(1.0)
-
-		move_arm(pub_command, loop_rate, home, 4.0, 4.0)
-
-		loop_count = 0
-
-    
 
 
 
